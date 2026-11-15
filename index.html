@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Princess Day – make a little something</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Caveat:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1ecfa;--ink:#3a2f55;--teal:#9b7fd4;--teal-d:#6b4fa8;--mint:#e2d8f5;--peach:#e07a5f;--gold:#e8a44e;--line:#ddd2f0;--mut:#7a6c96}
+*{box-sizing:border-box;margin:0}
+body{font-family:Inter,system-ui,sans-serif;color:var(--ink);background-color:var(--bg);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:40px 40px;min-height:100vh;line-height:1.55}
+h1,h2{font-family:Fraunces,serif;font-weight:700;line-height:1.1}
+.hand{font-family:Caveat,cursive;color:var(--teal-d)}
+.hidden{display:none!important}
+button{font:inherit;cursor:pointer;border:0}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn{background:var(--teal);color:#fff;padding:14px 26px;border-radius:999px;font-weight:600;box-shadow:0 8px 20px rgba(155,127,212,.3)}
+.btn.ghost{background:#fff;color:var(--teal-d);box-shadow:0 4px 12px rgba(58,47,85,.12)}
+.btn:disabled{opacity:.6;cursor:wait}
+.page{min-height:100vh;padding-bottom:100px}
+.wrap{max-width:640px;margin:0 auto;padding:48px 20px 80px}
+/* form */
+.head{text-align:center;margin-bottom:28px}
+.head h1{font-size:clamp(32px,7vw,46px);margin:8px 0}
+.head p{font-size:26px}
+.card{background:#fff;border-radius:22px;padding:26px;box-shadow:0 14px 40px rgba(58,47,85,.09);transform:rotate(-.4deg)}
+label{display:block;font-weight:600;font-size:14px;margin:16px 0 6px}
+input[type=text],textarea{width:100%;padding:12px 14px;border:2px solid var(--mint);border-radius:12px;font:inherit;background:#fcfaff}
+input:focus,textarea:focus{outline:none;border-color:var(--teal)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pic{aspect-ratio:1;border:2px dashed var(--teal);border-radius:14px;display:grid;place-items:center;text-align:center;font-size:13px;color:var(--mut);background:#f6f2fd center/cover;position:relative;overflow:hidden}
+.pic input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.pic.has span{display:none}
+.err{color:#b3402a;font-size:14px;margin-top:12px;min-height:20px}
+/* envelope page */
+#pg1{display:grid;place-items:center;text-align:center;cursor:pointer}
+.envelope{position:relative;width:min(86vw,440px);height:240px;margin:60px auto 0}
+.letter{position:absolute;left:5%;right:5%;top:-70px;height:210px;background:#fff;border-radius:12px;padding:26px 14px;box-shadow:0 10px 30px rgba(58,47,85,.12);transform:rotate(-1deg);z-index:1}
+.letter h2{font-family:Caveat;font-size:36px;font-weight:600}
+.letter p{font-family:Caveat;font-size:24px;color:var(--teal-d);line-height:1.3}
+.front{position:absolute;inset:60px 0 0;background:var(--mint);border:3px solid #8f7fb0;border-radius:8px 8px 22px 22px;z-index:2;clip-path:polygon(0 0,50% 48%,100% 0,100% 100%,0 100%)}
+.front::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4),transparent)}
+.stamp{position:absolute;left:6%;bottom:44px;z-index:3;border:2px dashed var(--teal);color:var(--teal-d);padding:6px 12px;font-weight:600;font-size:13px;letter-spacing:.06em;transform:rotate(-6deg);border-radius:8px;background:rgba(226,216,245,.8)}
+.heart{position:absolute;left:50%;top:132px;width:52px;margin-left:-26px;z-index:3;font-size:52px;line-height:1;color:var(--gold);text-shadow:0 2px 0 #fff}
+.cat{position:absolute;right:-26px;bottom:-14px;width:76px;z-index:4}
+.tap{margin-top:70px;letter-spacing:.3em;font-size:13px;color:var(--teal-d);animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.35}}
+/* viewer pages */
+.sec{max-width:900px;margin:0 auto;padding:60px 20px;text-align:center}
+.eyebrow{font-size:14px;color:var(--peach);font-weight:600;letter-spacing:.08em}
+.title{font-size:clamp(34px,7vw,64px);margin:10px 0 16px}
+.sub{font-size:clamp(30px,5vw,44px)}
+.ribbon{display:inline-block;background:var(--teal);color:#fff;padding:12px 30px 12px 40px;font-family:Caveat;font-size:26px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,16px 50%)}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center;margin-top:36px}
+.polaroid{background:#fff;padding:14px;box-shadow:0 12px 30px rgba(58,47,85,.14);transform:rotate(-2.5deg);position:relative}
+.polaroid img{width:100%;display:block;aspect-ratio:1;object-fit:cover}
+.polaroid::before,.polaroid::after{content:"";position:absolute;width:80px;height:26px;background:rgba(155,127,212,.35)}
+.polaroid::before{top:-12px;left:-24px;transform:rotate(-35deg)}
+.polaroid::after{bottom:-10px;right:-24px;transform:rotate(-35deg)}
+.msg{background:#fff;border-radius:22px;padding:28px;font-size:19px;color:#5e5178;text-align:left;box-shadow:0 14px 40px rgba(58,47,85,.09);white-space:pre-wrap}
+.minis{display:flex;gap:22px;justify-content:center;margin-top:48px}
+.minis img{width:200px;height:200px;object-fit:cover;background:#fff;padding:8px;box-shadow:0 6px 16px rgba(58,47,85,.12)}
+.minis img:nth-child(2){transform:translateY(10px) rotate(2deg)}
+.wall{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+.flip{aspect-ratio:3/4;perspective:900px;background:none;padding:0;position:relative}
+.flip>div{position:relative;width:100%;height:100%;transition:transform .7s;transform-style:preserve-3d}
+.flip.on>div{transform:rotateY(180deg)}
+.flip figure,.flip .back{position:absolute;inset:0;backface-visibility:hidden;background:#fff;box-shadow:0 10px 26px rgba(58,47,85,.12);border-radius:6px;overflow:hidden}
+.flip img{width:100%;height:100%;object-fit:cover}
+.flip .back{transform:rotateY(180deg);display:grid;place-items:center;padding:16px;font-family:Caveat;font-size:25px;color:var(--teal-d);background:repeating-linear-gradient(#fff 0 34px,#e6def5 34px 35px)}
+.pin{position:absolute;top:-8px;left:50%;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:var(--gold);z-index:2}
+.note{background:#fff repeating-linear-gradient(#fff 0 39px,#e6def5 39px 40px);border-radius:10px;padding:34px 28px 30px 40px;box-shadow:0 14px 40px rgba(58,47,85,.1);text-align:left;font-family:Caveat;font-size:27px;line-height:40px;white-space:pre-wrap;margin-top:24px}
+.note .sig{font-size:36px;color:var(--teal-d);text-decoration:underline wavy var(--teal);text-underline-offset:8px}
+.genbox{margin-top:34px}
+.genbox p{color:var(--mut);font-size:14px;margin-top:10px}
+/* nav */
+#nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);padding:8px 10px;border-radius:999px;box-shadow:0 8px 26px rgba(58,47,85,.16);z-index:10}
+#nav .btn{padding:10px 20px}
+#dots{display:flex;gap:7px}
+#dots i{width:8px;height:8px;border-radius:50%;background:var(--mint)}
+#dots i.on{background:var(--teal);transform:scale(1.3)}
+.nv{visibility:hidden}.nv.show{visibility:visible}
+/* modal */
+#modal{position:fixed;inset:0;background:rgba(58,47,85,.55);display:grid;place-items:center;z-index:30;padding:20px}
+.mbox{background:#fff;border-radius:22px;padding:28px;width:min(94vw,420px);text-align:center;position:relative}
+.mbox h2{font-size:28px;margin-bottom:8px}
+.mbox p{color:var(--mut);font-size:14px}
+.x{position:absolute;top:10px;right:14px;background:none;font-size:26px;color:var(--mut)}
+.codeRow{display:flex;gap:8px;margin:18px 0 6px}
+.codeRow input{flex:1}
+.big{font-family:Fraunces,serif;font-size:34px;margin:14px 0}
+#qr{display:flex;justify-content:center;margin:16px 0}
+.link{margin:10px 0 16px;padding:10px;background:var(--bg);border-radius:12px;word-break:break-all;font-size:13px}
+.btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+@media(max-width:700px){.hero{grid-template-columns:1fr}.wall{grid-template-columns:repeat(2,1fr)}.row{grid-template-columns:1fr}.minis{gap:10px}.minis img{width:29vw;height:29vw;padding:5px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* player */
+.player{display:flex;gap:18px;align-items:center;background:#fff;border-radius:26px;padding:16px 22px 16px 16px;box-shadow:0 14px 40px rgba(58,47,85,.09);max-width:560px;margin:34px auto 0;text-align:left}
+.player img{width:96px;height:96px;object-fit:cover;border-radius:16px;flex:none}
+.pm{flex:1;min-width:0}
+.now{font-size:12px;letter-spacing:.2em;color:var(--peach);font-weight:600}
+.pm h3{font-family:Fraunces,serif;font-size:24px;margin:2px 0}
+.pm small{color:var(--mut);font-size:15px}
+.ctl{display:flex;align-items:center;gap:12px;margin-top:10px}
+.play{width:46px;height:46px;border-radius:50%;background:var(--teal);color:#fff;font-size:15px;flex:none}
+.bar{flex:1;height:8px;border-radius:99px;background:var(--mint);cursor:pointer;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--teal)}
+.tm{font-size:13px;color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
+.hint{font-size:24px;margin-top:16px}
+.albumBtn{margin-top:22px}
+/* certificate */
+.cert{position:relative;background:#fffdf6;border-radius:8px;padding:12px;box-shadow:0 18px 50px rgba(58,47,85,.14);transform:rotate(-.6deg);margin-top:26px}
+.cert-in{border:3px double var(--gold);padding:30px 20px 26px;position:relative}
+.cert .k{font-size:12px;letter-spacing:.3em;color:var(--peach);font-weight:600}
+.cert h2{font-size:clamp(26px,6vw,38px);margin:6px 0}
+.cert .who{font-family:Caveat;font-size:clamp(34px,9vw,50px);color:var(--teal-d);border-bottom:2px dashed var(--teal);display:inline-block;padding:0 14px;margin:4px 0;max-width:100%;word-break:break-word}
+.cph{width:130px;height:130px;margin:18px auto 6px;border-radius:50%;border:5px solid #fff;box-shadow:0 8px 20px rgba(58,47,85,.18),0 0 0 3px var(--gold);object-fit:cover;display:block}
+.terms{list-style:none;padding:0;text-align:left;max-width:520px;margin:14px auto 0;font-size:16px}
+.terms li{padding:9px 0 9px 32px;position:relative;border-bottom:1px dotted var(--line)}
+.terms li::before{content:"✿";position:absolute;left:6px;color:var(--teal)}
+.sigs{display:flex;gap:18px;margin-top:24px}
+.sigs div{flex:1;min-width:0}
+.sigs b{display:block;font-family:Caveat;font-size:30px;font-weight:600;color:var(--teal-d);border-bottom:2px solid var(--ink);line-height:1.2;overflow:hidden;text-overflow:ellipsis}
+.sigs small{font-size:12px;color:var(--mut)}
+.seal{position:absolute;right:10px;top:10px;width:62px;height:62px;border-radius:50%;background:var(--gold);color:#fff;display:grid;place-items:center;font-weight:700;font-size:11px;letter-spacing:.05em;transform:rotate(12deg);box-shadow:0 0 0 3px #fff,0 0 0 5px var(--gold);text-align:center;line-height:1.1}
+/* letter with pinned photos */
+.letter2{position:relative;margin-top:44px}
+.note{--lh:40px;position:relative;margin-top:0;padding:185px 28px 195px 40px;line-height:var(--lh);background:#fff repeating-linear-gradient(#fff 0 calc(var(--lh) - 1px),#e6def5 calc(var(--lh) - 1px) var(--lh))}
+.pp{position:absolute;width:min(36vw,170px);background:#fff;padding:6px 6px 20px;box-shadow:0 8px 20px rgba(58,47,85,.22);z-index:2}
+.pp img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.pp::before{content:"";position:absolute;top:-7px;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--gold);box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.pa{top:-24px;left:-8px;transform:rotate(-7deg)}
+.pb{top:-16px;right:-8px;transform:rotate(6deg)}
+.pc{bottom:-22px;right:16px;transform:rotate(-4deg)}
+.cat2{position:absolute;left:14px;bottom:-18px;width:72px;z-index:3;transform:rotate(-6deg)}
+a.btn{display:inline-block;text-decoration:none}
+@media(max-width:700px){.cat2{width:60px}.player{padding:12px;gap:12px}.player img{width:72px;height:72px}.pm h3{font-size:20px}.pm small{font-size:14px}.play{width:40px;height:40px}.tm{font-size:12px}
+.note{--lh:32px;font-size:22px;padding:152px 20px 150px 24px}.note .sig{font-size:30px}.letter2{margin-left:6px;margin-right:6px}.cert-in{padding:26px 14px 22px}.seal{width:52px;height:52px;font-size:9px}}
+</style>
+</head>
+<body>
+
+<main id="pg0" class="page wrap">
+  <div class="head">
+    <p class="hand">happy princess day</p>
+    <h1>Make her a little corner of the internet</h1>
+  </div>
+  <div class="card">
+    <div class="row">
+      <div><label for="sender">Your name</label><input type="text" id="sender" maxlength="30" placeholder="Rahul"></div>
+      <div><label for="receiver">Her name</label><input type="text" id="receiver" maxlength="30" placeholder="Priya"></div>
+    </div>
+    <label>Three photos of you two</label>
+    <div class="pics">
+      <div class="pic"><span>+ photo 1</span><input type="file" accept="image/*"></div>
+      <div class="pic"><span>+ photo 2</span><input type="file" accept="image/*"></div>
+      <div class="pic"><span>+ photo 3</span><input type="file" accept="image/*"></div>
+    </div>
+    <label for="message">Your message <span style="font-weight:400;color:var(--mut)">(optional)</span></label>
+    <textarea id="message" rows="4" maxlength="400" placeholder="Every year this day comes around and I think the same thing..."></textarea>
+    <div class="err" id="err" role="alert"></div>
+    <button class="btn" id="previewBtn" style="width:100%;margin-top:10px">Preview</button>
+  </div>
+</main>
+
+<section id="pg1" class="page hidden">
+  <div>
+    <div class="envelope">
+      <div class="letter"><h2>Hey You!</h2><p>I made a little something<br>just for you...</p><p style="margin-top:8px">happy princess day ✿</p></div>
+      <div class="front"></div>
+      <div class="stamp">HAPPY PRINCESS DAY</div>
+      <div class="heart">♥</div>
+      <img class="cat" id="catImg" alt="">
+    </div>
+    <p class="tap">TAP ANYWHERE TO BEGIN</p>
+  </div>
+</section>
+
+<section id="pg2" class="page hidden"><div class="sec">
+  <p class="eyebrow">HAPPY PRINCESS DAY</p>
+  <h1 class="title" id="vTitle"></h1>
+  <span class="ribbon" id="vRibbon"></span>
+  <div class="hero">
+    <div class="polaroid"><img src="p2.jpeg" alt="Us"></div>
+    <div class="msg" id="vMsg"></div>
+  </div>
+  <div class="minis" id="minis"></div>
+  <div class="player">
+    <img id="pArt" alt="">
+    <div class="pm">
+      <div class="now">NOW PLAYING</div>
+      <h3>Our Song</h3><small>the one that's ours</small>
+      <div class="ctl"><button class="play" id="pplay" aria-label="Play or pause">▶</button><div class="bar" id="pbar"><i id="pfill"></i></div><span class="tm" id="ptime">0:00 / 0:00</span></div>
+    </div>
+  </div>
+  <p class="hand hint">press play — this one is permanently attached to memories of you ✿</p>
+  <button class="btn albumBtn" id="albumBtn">see our album →</button>
+</div></section>
+
+<section id="pg3" class="page hidden"><div class="sec">
+  <p class="eyebrow">THE MEMORY WALL</p>
+  <h2 class="title sub">flip one over</h2>
+  <p class="hand" style="font-size:26px">every photo has something written on the back ✿</p>
+  <div class="wall" id="wall"></div>
+</div></section>
+
+<section id="pg4" class="page hidden"><div class="sec" style="max-width:640px">
+  <p class="eyebrow">OFFICIALLY OFFICIAL</p>
+  <h2 class="title sub">the princess certificate</h2>
+  <div class="cert" id="certBox"><div class="cert-in">
+    <div class="seal">OFFICIAL<br>SEAL</div>
+    <p class="k">CERTIFICATE OF PRINCESSHOOD</p>
+    <h2>Certified Princess</h2>
+    <p>This is to certify that</p>
+    <div class="who" id="cWho"></div>
+    <img class="cph" id="cPh" alt="">
+    <p>is hereby the one and only official princess, with these lifelong duties:</p>
+    <ul class="terms">
+      <li><b>Chief Banter Officer.</b> Fully responsible for my fun banter. Always. No off days, no "I'm tired".</li>
+      <li><b>Always there for me.</b> Replies, rants, random 2am thoughts. All covered.</li>
+      <li><b>Laughs at my jokes.</b> Even the bad ones. Especially the bad ones.</li>
+      <li><b>Snack policy.</b> Shares the good fries. No exceptions.</li>
+      <li><b>Terms:</b> valid forever, non-refundable, non-transferable.</li>
+    </ul>
+    <div class="sigs"><div><b id="cFrom"></b><small>issued by</small></div><div><b>the cat</b><small>official witness</small></div></div>
+  </div></div>
+  <button class="btn" id="dlCert" style="margin-top:26px">Download certificate ⬇</button>
+</div></section>
+
+<section id="pg5" class="page hidden"><div class="sec" style="max-width:700px">
+  <p class="hand" style="font-size:24px">✿ one last thing ✿</p>
+  <h2 class="title sub">A Note For You</h2>
+  <div class="letter2">
+    <div class="pp pa"><img id="lp0" alt=""></div><div class="pp pb"><img id="lp1" alt=""></div><div class="pp pc"><img id="lp2" alt=""></div>
+    <div class="note" id="note"></div>
+    <img class="cat2" id="catImg2" alt="">
+  </div>
+  <a class="btn hidden" id="returnBtn" href="https://love-page-ccs.pages.dev/" target="_blank" rel="noopener" style="margin-top:36px">Return his love ♥</a>
+  <div class="genbox hidden" id="genbox">
+    <button class="btn" id="genBtn">Generate QR &amp; link</button>
+    <p>Happy with it? This creates the link you'll send her.</p>
+  </div>
+</div></section>
+
+<nav id="nav" class="hidden">
+  <button class="btn ghost nv" id="back">← Back</button>
+  <div id="dots"><i></i><i></i><i></i><i></i><i></i></div>
+  <button class="btn nv" id="next">Next →</button>
+</nav>
+
+<div id="modal" class="hidden" role="dialog" aria-modal="true">
+  <div class="mbox">
+    <button class="x" id="mClose" aria-label="Close">×</button>
+    <div id="sPay">
+      <h2>Almost there</h2>
+      <p>Got a code? Add it below.</p>
+      <div class="codeRow"><input type="text" id="code" placeholder="Code" autocapitalize="off"><button class="btn ghost" id="applyBtn">Apply</button></div>
+      <p id="codeMsg" style="min-height:20px"></p>
+      <div class="big" id="priceBig"></div>
+      <button class="btn" id="payBtn" style="width:100%"></button>
+    </div>
+    <div id="sBusy" class="hidden"><h2>Uploading photos…</h2><p>Payment received. Keep this tab open.</p></div>
+    <div id="sFail" class="hidden">
+      <h2>Upload failed</h2>
+      <p>Your payment went through, so you won't be charged again.</p>
+      <p id="failMsg" style="margin:10px 0;color:#b3402a"></p>
+      <button class="btn" id="retryBtn">Retry upload</button>
+      <p style="margin-top:12px">Payment ID: <b id="failPay"></b><br>Keep this tab open until it works.</p>
+    </div>
+    <div id="sDone" class="hidden">
+      <h2>It's ready</h2>
+      <div id="qr"></div>
+      <div class="link" id="shareLink"></div>
+      <div class="btns"><button class="btn" id="copyBtn">Copy link</button><button class="btn ghost" id="dlBtn">Save QR</button></div>
+    </div>
+  </div>
+</div>
+
+<audio id="aud" src="song.mp3" preload="auto" loop></audio>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* ---------- CONFIG ---------- */
+const RZP_KEY = "rzp_live_SmizRaPApu81ZS";
+const SB_URL  = "https://caheredfekvzinpykelv.supabase.co";
+const SB_KEY  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNhaGVyZWRmZWt2emlucHlrZWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjQ1ODMsImV4cCI6MjEwNjE0MDU4M30.pslYFUfZMb-MHKuvmxW7b0DRQeT0YCpJ5_Gjhb3VIzU";
+const PRICE = 99; // INR, default
+const CODES = { ayou:0, ayou1:1, love:59 }; // code -> price in INR
+const BUCKET = "photos", TABLE = "surprises";
+const G = "https://media.giphy.com/media/v1.";
+const CAT = G+"Y2lkPWVjZjA1ZTQ3ejQ5bmwwb3ZuamNpZXF1NDV6b3YzbHk2YmF3YWh0OG8wcDc4MzlyNCZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/eAot8Ldr85y3peseC3/giphy.gif";
+const DEF = [
+  G+"Y2lkPTc5MGI3NjExNTV5MDhpejY0eHowZG1oYmk0eW15cG5rODEwb3Q2MnQ3NXQ0ajhucCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/QO6gybBh0d4LLTNn1d/giphy.gif",
+  G+"Y2lkPTc5MGI3NjExNTV5MDhpejY0eHowZG1oYmk0eW15cG5rODEwb3Q2MnQ3NXQ0ajhucCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/yUThmGwfT1hrORu84T/giphy.gif",
+  G+"Y2lkPTc5MGI3NjExdDA3Yjk0dGNxMGFqcjkyaGg3ZGR1dWIybTNvdDJmZTl3cHptOTBndCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/VKrjhp2D8pw6zjVsnD/giphy.gif"
+];
+const MINI_GIFS = [
+  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXJ2dTFuNDRqcWxmMDV6ejZ6MHg5MTlqcG9uYm0wN2lkd2wwN2s3ZyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/QO6gybBh0d4LLTNn1d/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXJ2dTFuNDRqcWxmMDV6ejZ6MHg5MTlqcG9uYm0wN2lkd2wwN2s3ZyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Ey9c4OTwlZWCuVafkZ/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXJ2dTFuNDRqcWxmMDV6ejZ6MHg5MTlqcG9uYm0wN2lkd2wwN2s3ZyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/tAnKxPsuWqmuBuHD0Y/giphy.gif"
+];
+const DEFAULT_NOTE = "I'm not great at saying this stuff out loud, so I made you a page instead.\n\nI hope today is a good one. And I hope you know that whatever happens next, you've got a person in your corner permanently. That's me.";
+const P = [1,2,3,4,5,6].map(i=>`p${i}.jpeg`);
+const BACKS = ["the day you became my favourite notification.","this smile is still my weakness.","we were being idiots and it was perfect.","you make boring days feel like weekends.","i'd pick you again. every single time.","to be continued... forever ✿"];
+
+const $ = i => document.getElementById(i);
+const esc = s => String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const H = {apikey:SB_KEY, Authorization:"Bearer "+SB_KEY};
+const sid0 = new URLSearchParams(location.search).get("id");
+const mode = sid0 ? "view" : "create";
+const first = mode==="view" ? 1 : 0;
+const files = [null,null,null];
+let step = first, D = null, price = PRICE, code = "", pending = null;
+
+/* ---------- NAVIGATION ---------- */
+function show(n, push=true){
+  step = n;
+  for(let i=0;i<6;i++) $("pg"+i).classList.toggle("hidden", i!==n);
+  $("nav").classList.toggle("hidden", n<1);
+  $("back").classList.toggle("show", n>first);
+  $("next").classList.toggle("show", n>=1 && n<5);
+  $("next").textContent = n===1 ? "Open ✉" : "Next →";
+  document.querySelectorAll("#dots i").forEach((d,i)=>d.classList.toggle("on", i===n-1));
+  $("genbox").classList.toggle("hidden", mode!=="create");
+  window.scrollTo(0,0);
+  if(push) history.pushState({n},"",location.search+"#s"+n);
+}
+const go = d => { const n=step+d; if(n>=first && n<=5 && (n>=1||mode==="create")) show(n); };
+window.addEventListener("popstate", e => { const n = e.state?.n ?? first; show(D||n===0 ? n : first, false); });
+$("back").onclick = () => history.length>1 && history.state && history.state.n>first ? history.back() : go(-1);
+const aud = $("aud"), playSong = () => aud.play().catch(()=>{});
+$("next").onclick = () => { if(step===1) playSong(); go(1); };
+$("pg1").onclick = () => { playSong(); go(1); };
+document.addEventListener("keydown", e => {
+  if($("modal").classList.contains("hidden") && step>=1 && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)){
+    if(e.key==="ArrowRight") go(1); if(e.key==="ArrowLeft") go(-1);
+  }
+});
+
+/* ---------- RENDER ---------- */
+function render(d){
+  D = d;
+  const ph = (d.photos||[]).concat(DEF).slice(0,3);
+  $("catImg").src = CAT; $("catImg2").src = CAT;
+  $("vTitle").textContent = `To ${d.receiver}`;
+  $("vRibbon").textContent = `from ${d.sender} ✿`;
+  $("vMsg").textContent = "Every year this day comes around and I think the same thing: I got so lucky with you. So instead of a text this time, I built you a tiny corner of the internet. Stay a while, there's a bit to see.";
+  $("minis").innerHTML = MINI_GIFS.map(u=>`<img src="${esc(u)}" alt="">`).join("");
+  $("wall").innerHTML = P.map((u,i)=>`<button class="flip" aria-label="Flip photo ${i+1}"><span class="pin"></span><div><figure><img src="${esc(u)}" alt=""></figure><div class="back">${BACKS[i]}</div></div></button>`).join("");
+  document.querySelectorAll(".flip").forEach(b=>b.onclick=e=>{e.stopPropagation();b.classList.toggle("on");});
+  $("pArt").src = MINI_GIFS[0];
+  $("cWho").textContent = d.receiver; $("cFrom").textContent = d.sender; $("cPh").src = ph[0];
+  [0,1,2].forEach(i=>$("lp"+i).src = ph[i]);
+  $("note").innerHTML = `Hey ${esc(d.receiver)},\n\n${esc(d.message || DEFAULT_NOTE)}\n\nalways yours,\n<span class="sig">${esc(d.sender)}</span>`;
+}
+
+if(mode==="view") $("returnBtn").classList.remove("hidden"); // shared link only, never in the creator preview
+
+/* ---------- MUSIC PLAYER ---------- */
+const fmt = t => isFinite(t) ? Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0") : "0:00";
+const syncBtn = () => { $("pplay").textContent = aud.paused ? "▶" : "❚❚"; };
+$("pplay").onclick = () => aud.paused ? playSong() : aud.pause();
+aud.onplay = aud.onpause = syncBtn;
+aud.ontimeupdate = aud.onloadedmetadata = () => {
+  $("pfill").style.width = (aud.duration ? aud.currentTime/aud.duration*100 : 0)+"%";
+  $("ptime").textContent = fmt(aud.currentTime)+" / "+fmt(aud.duration);
+};
+$("pbar").onclick = e => { if(!aud.duration) return; const r=e.currentTarget.getBoundingClientRect(); aud.currentTime=(e.clientX-r.left)/r.width*aud.duration; };
+$("albumBtn").onclick = () => go(1);
+$("dlCert").onclick = async () => {
+  const b = $("dlCert"); b.disabled = true; b.textContent = "Making it…";
+  try{
+    const c = await html2canvas($("certBox"),{scale:2,useCORS:true,backgroundColor:null,onclone:doc=>{doc.getElementById("certBox").style.transform="none";}});
+    const a = document.createElement("a"); a.href = c.toDataURL("image/png"); a.download = "princess-certificate.png"; a.click();
+  }catch(e){ console.error(e); alert("Couldn't save it. A screenshot works too."); }
+  b.disabled = false; b.textContent = "Download certificate ⬇";
+};
+syncBtn();
+
+/* ---------- CREATE: form + preview ---------- */
+if(mode==="create"){
+  document.querySelectorAll(".pic").forEach((el,i)=>{
+    el.querySelector("input").addEventListener("change",e=>{
+      const f = e.target.files[0]; if(!f) return;
+      files[i]=f; el.style.backgroundImage=`url(${URL.createObjectURL(f)})`; el.classList.add("has");
+    });
+  });
+  $("previewBtn").onclick = () => {
+    const sender=$("sender").value.trim(), receiver=$("receiver").value.trim(), message=$("message").value.trim();
+    if(!sender||!receiver) return $("err").textContent="Add both names.";
+    if(files.some(f=>!f)) return $("err").textContent="Add all 3 photos.";
+    $("err").textContent="";
+    if(pending && !pending.done) pending.urls=[]; // retry re-uploads the latest photos
+    render({sender,receiver,message,photos:files.map(f=>URL.createObjectURL(f))});
+    show(1);
+  };
+  history.replaceState({n:0},"",location.pathname);
+  show(0,false);
+}else{
+  history.replaceState({n:1},"",location.search+"#s1");
+  $("pg0").classList.add("hidden");
+  (async()=>{
+    let d=null;
+    try{ const r=await fetch(`${SB_URL}/rest/v1/${TABLE}?id=eq.${encodeURIComponent(sid0)}&select=*`,{headers:H}); d=(await r.json())[0]; }catch(e){}
+    if(!d){ $("pg1").innerHTML='<div class="wrap"><h2>This link doesn\'t look right</h2><p style="margin-top:10px">Ask the sender to share it again.</p></div>'; $("pg1").classList.remove("hidden"); return; }
+    render(d); show(1,false);
+  })();
+}
+
+/* ---------- PAYMENT ---------- */
+const states = ["sPay","sBusy","sFail","sDone"];
+const setState = s => states.forEach(x=>$(x).classList.toggle("hidden",x!==s));
+function refreshPrice(){
+  $("priceBig").textContent = price===0 ? "Free" : "₹"+price;
+  $("payBtn").textContent = price===0 ? "Generate for free" : "Pay ₹"+price+" & generate";
+}
+$("genBtn").onclick = () => {
+  $("modal").classList.remove("hidden");
+  setState(pending ? (pending.done ? "sDone" : "sFail") : "sPay");
+  refreshPrice();
+};
+$("mClose").onclick = () => { if(!$("sBusy").classList.contains("hidden")) return; $("modal").classList.add("hidden"); };
+$("applyBtn").onclick = () => {
+  const c = $("code").value.trim().toLowerCase();
+  if(c in CODES){ price=CODES[c]; code=c; $("codeMsg").textContent="Code applied ✓"; $("codeMsg").style.color="var(--teal-d)"; }
+  else { price=PRICE; code=""; $("codeMsg").textContent="That code isn't valid."; $("codeMsg").style.color="#b3402a"; }
+  refreshPrice();
+};
+$("payBtn").onclick = () => {
+  if(price===0) return finalize("FREE-"+code);
+  const rz = new Razorpay({
+    key:RZP_KEY, amount:price*100, currency:"INR",
+    name:"Princess Day", description:"A little something for "+D.receiver,
+    theme:{color:"#9b7fd4"},
+    handler: r => finalize(r.razorpay_payment_id)
+  });
+  rz.on("payment.failed",()=>{ $("codeMsg").textContent="Payment failed. Try again."; $("codeMsg").style.color="#b3402a"; });
+  rz.open();
+};
+$("retryBtn").onclick = () => finalize(pending.payId);
+
+async function finalize(payId){
+  if(!pending) pending = {sid:crypto.randomUUID(), payId, urls:[], done:false};
+  try{ localStorage.setItem("bd_last_payment", payId); }catch(e){}
+  setState("sBusy");
+  try{
+    for(let i=0;i<3;i++){
+      if(pending.urls[i]) continue;
+      const blob = await shrink(files[i]);
+      const path = `${pending.sid}/${i}.jpg`;
+      const r = await fetch(`${SB_URL}/storage/v1/object/${BUCKET}/${path}`,{method:"POST",headers:{...H,"Content-Type":"image/jpeg"},body:blob});
+      if(!r.ok){
+        const t = await r.text();
+        if(!/Duplicate|already exists/i.test(t)){ console.error("upload",r.status,t); throw new Error(`Photo ${i+1} failed (${r.status}): ${t.slice(0,160)}`); }
+      }
+      pending.urls[i] = `${SB_URL}/storage/v1/object/public/${BUCKET}/${path}`;
+    }
+    const r = await fetch(`${SB_URL}/rest/v1/${TABLE}`,{method:"POST",headers:{...H,"Content-Type":"application/json",Prefer:"return=minimal"},
+      body:JSON.stringify({id:pending.sid,sender:D.sender,receiver:D.receiver,message:D.message,photos:pending.urls,payment_id:pending.payId})});
+    if(!r.ok && r.status!==409){ const t = await r.text(); console.error("insert",r.status,t); throw new Error(`Couldn't save page (${r.status}): ${t.slice(0,160)}`); }
+    pending.done = true;
+    const link = `${location.origin}${location.pathname}?id=${pending.sid}`;
+    $("shareLink").textContent = link;
+    $("qr").innerHTML = ""; new QRCode($("qr"),{text:link,width:200,height:200});
+    $("copyBtn").onclick = () => { navigator.clipboard.writeText(link); $("copyBtn").textContent="Copied"; };
+    $("dlBtn").onclick = () => { const c=$("qr").querySelector("canvas"); const a=document.createElement("a"); a.href=c.toDataURL("image/png"); a.download="princess-day-qr.png"; a.click(); };
+    setState("sDone");
+  }catch(e){
+    $("failMsg").textContent = e.message; $("failPay").textContent = pending.payId;
+    setState("sFail");
+  }
+}
+function shrink(file,max=1100){
+  return new Promise((res,rej)=>{
+    const img=new Image();
+    img.onload=()=>{const s=Math.min(1,max/Math.max(img.width,img.height));
+      const c=document.createElement("canvas");c.width=img.width*s;c.height=img.height*s;
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      c.toBlob(b=>b?res(b):rej(new Error("Bad image")),"image/jpeg",.85);};
+    img.onerror=()=>rej(new Error("Couldn't read an image."));
+    img.src=URL.createObjectURL(file);
+  });
+}
+</script>
+</body>
+</html>
